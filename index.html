@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#3B2F8F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Perfil Sensorial">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Perfil Sensorial 2</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ══ PANTALLA: PORTADA ══════════════════════════════════════════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="home-inner">
+    <div class="home-badge">Cuestionario para padres / cuidadores · 3:0 a 14:11 años</div>
+    <div class="home-logo">🧠</div>
+    <h1 class="home-title">Perfil Sensorial 2</h1>
+    <p class="home-sub">Evaluación del procesamiento sensorial infantil<br>basada en el modelo de Dunn</p>
+    <button class="btn-hero" onclick="showScreen('profiles')">Comenzar →</button>
+    <div class="home-pills">
+      <span class="pill">86 ítems</span>
+      <span class="pill">9 secciones</span>
+      <span class="pill">4 cuadrantes</span>
+      <span class="pill">🖨️ Imprimible</span>
+    </div>
+    <p class="home-legal">Adaptación española © 2016 NCS Pearson, Inc. · Para uso interno del profesional</p>
+  </div>
+</div>
+
+<!-- ══ PANTALLA: PERFILES ═════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-profiles">
+  <div class="topbar">
+    <button class="topbar-back" onclick="showScreen('home')">‹</button>
+    <span class="topbar-title">Perfiles</span>
+    <span></span>
+  </div>
+  <div class="page-content">
+    <div class="profile-grid" id="profile-grid"></div>
+    <div class="profile-actions" id="profile-actions">
+      <button class="btn btn-primary" onclick="startSurvey()">Iniciar encuesta →</button>
+      <button class="btn btn-teal"    onclick="viewResults()">Ver resultados</button>
+      <button class="btn btn-ghost"   onclick="confirmDelete()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANTALLA: ENCUESTA ═════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-survey">
+  <div class="topbar">
+    <button class="topbar-back no-print" onclick="showScreen('profiles')">‹</button>
+    <span class="topbar-title" id="survey-topbar-title">Encuesta</span>
+    <button class="topbar-action no-print" onclick="viewResults()">Resultados →</button>
+  </div>
+  <div class="survey-child-bar" id="survey-child-bar"></div>
+  <div class="section-tabs-wrap">
+    <div class="section-tabs" id="section-tabs"></div>
+  </div>
+  <div class="survey-body" id="survey-body"></div>
+</div>
+
+<!-- ══ PANTALLA: RESULTADOS ══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-results">
+  <div class="topbar no-print">
+    <button class="topbar-back" onclick="showScreen('survey')">‹</button>
+    <span class="topbar-title">Resultados</span>
+    <button class="topbar-action" onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+  <div class="results-body" id="results-body"></div>
+</div>
+
+<!-- ══ MODAL: NUEVO PERFIL ════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal">
+    <h3 class="modal-title">Nuevo perfil</h3>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombres del niño <span class="req">*</span></label>
+        <input type="text" id="f-nombres" placeholder="Ej: María">
+      </div>
+      <div class="form-group">
+        <label>Apellidos <span class="req">*</span></label>
+        <input type="text" id="f-apellidos" placeholder="Ej: González Pérez">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Sexo</label>
+        <select id="f-sexo">
+          <option value="">-- seleccionar --</option>
+          <option value="Hombre">Hombre</option>
+          <option value="Mujer">Mujer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fecha de nacimiento <span class="req">*</span></label>
+        <input type="date" id="f-nacimiento">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fecha de aplicación</label>
+        <input type="date" id="f-aplicacion">
+      </div>
+      <div class="form-group form-age" id="f-edad-display">
+        <label>Edad cronológica</label>
+        <div class="edad-box" id="edad-calculada">— años — meses</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre del examinador</label>
+        <input type="text" id="f-examinador" placeholder="Ej: Lic. Ana Torres">
+      </div>
+      <div class="form-group">
+        <label>Profesión del examinador</label>
+        <input type="text" id="f-profesion" placeholder="Ej: Terapeuta Ocupacional">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Persona que cumplimenta</label>
+        <input type="text" id="f-cuidador" placeholder="Ej: María García (madre)">
+      </div>
+      <div class="form-group">
+        <label>Relación con el niño</label>
+        <select id="f-relacion">
+          <option value="">-- seleccionar --</option>
+          <option>Madre</option><option>Padre</option>
+          <option>Tutor/a</option><option>Cuidador/a</option><option>Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Escuela / Centro</label>
+        <input type="text" id="f-escuela" placeholder="Nombre del centro">
+      </div>
+      <div class="form-group">
+        <label>Curso escolar</label>
+        <input type="text" id="f-curso" placeholder="Ej: 2º Primaria">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Posición entre hermanos</label>
+      <select id="f-hermanos">
+        <option value="">-- seleccionar --</option>
+        <option>Hijo único</option><option>Primero</option>
+        <option>Segundo</option><option>Tercero</option>
+        <option>Cuarto</option><option>Quinto</option><option>Otro</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>¿Más de 3 niños en casa en los últimos 12 meses?</label>
+      <select id="f-convivencia">
+        <option value="">-- seleccionar --</option>
+        <option>Sí</option><option>No</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-profile')">Cancelar</button>
+      <button class="btn btn-primary" onclick="Profiles.save()">Crear perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ELIMINAR ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal modal-sm">
+    <h3 class="modal-title">¿Eliminar perfil?</h3>
+    <p class="modal-text">Se eliminarán todos los datos y respuestas. Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-delete')">Cancelar</button>
+      <button class="btn btn-danger" onclick="Profiles.delete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script src="data/sections.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+<script src="js/profiles.js"></script>
+<script src="js/survey.js"></script>
+<script src="js/results.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+  }
+</script>
+</body>
+</html>
